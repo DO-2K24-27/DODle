@@ -32,3 +32,8 @@ With DODle you will be able to guess DO related people every day.
 Every day we will pick a new person from the database and store it in the database
 Every day we will reset the database of guesses
 Every month we will reset the database of leaderboard
+
+## Participants
+
+- Pierre-Louis will handle the backend
+- Joris will handle the frontend
