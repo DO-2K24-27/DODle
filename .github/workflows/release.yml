@@ -1,0 +1,132 @@
+name: Release
+
+on:
+  release:
+    types: [created]
+
+env:
+  REGISTRY: ghcr.io
+  API_IMAGE_NAME: ${{ github.repository }}/api
+  FRONTEND_IMAGE_NAME: ${{ github.repository }}/frontend
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: './front/package-lock.json'
+
+    # API Tests and Build
+    - name: API - Install dependencies
+      working-directory: ./api
+      run: go mod download
+
+    - name: API - Run golangci-lint
+      uses: golangci/golangci-lint-action@v3
+      with:
+        version: latest
+        working-directory: ./api
+
+    - name: API - Run tests
+      working-directory: ./api
+      run: go test -v ./...
+
+    # Frontend Tests and Build
+    - name: Frontend - Install dependencies
+      working-directory: ./front
+      run: npm ci
+
+    - name: Frontend - Run ESLint
+      working-directory: ./front
+      run: npm run lint || npx eslint . --ext .js,.jsx,.ts,.tsx
+
+    - name: Frontend - Run tests
+      working-directory: ./front
+      run: npm test
+
+    # Docker Build and Push
+    - name: Log in to the Container registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    # API Docker Build and Push
+    - name: API - Extract metadata
+      id: api-meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.API_IMAGE_NAME }}
+        tags: |
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=semver,pattern={{major}}
+          latest
+
+    - name: API - Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./api
+        push: true
+        tags: ${{ steps.api-meta.outputs.tags }}
+        labels: ${{ steps.api-meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: API - Scan image for vulnerabilities
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ env.REGISTRY }}/${{ env.API_IMAGE_NAME }}:latest
+        format: 'table'
+        exit-code: '1'
+        ignore-unfixed: true
+        vuln-type: 'os,library'
+        severity: 'CRITICAL,HIGH'
+
+    # Frontend Docker Build and Push
+    - name: Frontend - Extract metadata
+      id: frontend-meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}
+        tags: |
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=semver,pattern={{major}}
+          latest
+
+    - name: Frontend - Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./front
+        push: true
+        tags: ${{ steps.frontend-meta.outputs.tags }}
+        labels: ${{ steps.frontend-meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: Frontend - Scan image for vulnerabilities
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}:latest
+        format: 'table'
+        exit-code: '1'
+        ignore-unfixed: true
+        vuln-type: 'os,library'
+        severity: 'CRITICAL,HIGH' 
