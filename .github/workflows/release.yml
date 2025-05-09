@@ -10,7 +10,7 @@ env:
   FRONTEND_IMAGE_NAME: ${{ github.repository }}/frontend
 
 jobs:
-  build-and-push:
+  test:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -55,7 +55,7 @@ jobs:
       working-directory: ./front
       run: npm run lint
 
-    build-and-push:
+  build-and-push:
     needs: test
     runs-on: github-runner-do
     env:
