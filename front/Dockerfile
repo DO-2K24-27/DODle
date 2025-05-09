@@ -24,7 +24,6 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Copy static files from builder
 COPY --from=builder /app/.next/static /usr/share/nginx/html/_next/static
 COPY --from=builder /app/public /usr/share/nginx/html/public
-COPY --from=builder /app/.next/standalone /usr/share/nginx/html
 
 # Expose port
 EXPOSE 80
