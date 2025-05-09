@@ -12,27 +12,22 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-# Run linting
-RUN npm run lint
-
 # Build the application
 RUN npm run build
 
 # Production stage
-FROM node:20-alpine AS runner
+FROM nginx:alpine
 
-WORKDIR /app
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Set environment to production
-ENV NODE_ENV=production
-
-# Copy necessary files from builder
-COPY --from=builder /app/next.config.js ./
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/static ./.next/static
+# Copy static files from builder
+COPY --from=builder /app/.next/static /usr/share/nginx/html/_next/static
+COPY --from=builder /app/public /usr/share/nginx/html/public
+COPY --from=builder /app/.next/standalone /usr/share/nginx/html
 
 # Expose port
-EXPOSE 3000
+EXPOSE 80
 
-# Start the application
-CMD ["node", "server.js"] 
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"] 

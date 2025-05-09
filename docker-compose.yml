@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   api:
-    image: ghcr.io/do2024-2047/dodle/api:1.0.0
+    image: ${REGISTRY:-ghcr.io}/${GITHUB_REPOSITORY:-your-username/your-repo}/api:latest
     build:
       context: ./api
       dockerfile: Dockerfile
@@ -14,12 +14,12 @@ services:
       - app-network
 
   frontend:
-    image: ghcr.io/do2024-2047/dodle/frontend:1.0.0
+    image: ${REGISTRY:-ghcr.io}/${GITHUB_REPOSITORY:-your-username/your-repo}/frontend:latest
     build:
       context: ./front
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "80:80"
     environment:
       - NEXT_PUBLIC_API_URL=http://api:8080
     depends_on:
