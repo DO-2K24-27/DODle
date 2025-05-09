@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   api:
-    image: ${REGISTRY:-ghcr.io}/${GITHUB_REPOSITORY:-your-username/your-repo}/api:latest
+    image: dopolytech/dodle-api:latest
     build:
       context: ./api
       dockerfile: Dockerfile
@@ -14,7 +14,7 @@ services:
       - app-network
 
   frontend:
-    image: ${REGISTRY:-ghcr.io}/${GITHUB_REPOSITORY:-your-username/your-repo}/frontend:latest
+    image: dopolytech/dodle-front:latest
     build:
       context: ./front
       dockerfile: Dockerfile
@@ -24,6 +24,13 @@ services:
       - NEXT_PUBLIC_API_URL=http://api:8080
     depends_on:
       - api
+    networks:
+      - app-network
+
+  database:
+    image: postgres:17
+    environment:
+      - POSTGRES_PASSWORD=postgres
     networks:
       - app-network
 
