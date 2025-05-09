@@ -63,23 +63,20 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    # API Build and Push with Kaniko
-    - name: API - Build and push with Kaniko
-      uses: imjasonh/setup-kaniko@v0.1
-      with:
-        kaniko-version: latest
-
+    # API Build and Push
     - name: API - Build and push image
-      run: |
-        /kaniko/executor \
-          --context ${{ github.workspace }}/api \
-          --dockerfile ${{ github.workspace }}/api/Dockerfile \
-          --destination ${{ env.REGISTRY }}/${{ env.API_IMAGE_NAME }}:{{ version }} \
-          --destination ${{ env.REGISTRY }}/${{ env.API_IMAGE_NAME }}:{{ major }}.{{ minor }} \
-          --destination ${{ env.REGISTRY }}/${{ env.API_IMAGE_NAME }}:{{ major }} \
-          --destination ${{ env.REGISTRY }}/${{ env.API_IMAGE_NAME }}:latest \
-          --cache=true \
-          --cache-repo ${{ env.REGISTRY }}/${{ env.API_IMAGE_NAME }}/cache
+      uses: int128/kaniko-action@v1
+      with:
+        image: ${{ env.REGISTRY }}/${{ env.API_IMAGE_NAME }}
+        tags: |
+          {{ version }}
+          {{ major }}.{{ minor }}
+          {{ major }}
+          latest
+        cache: true
+        cache-repo: ${{ env.REGISTRY }}/${{ env.API_IMAGE_NAME }}/cache
+        context: ./api
+        dockerfile: ./api/Dockerfile
 
     - name: API - Scan image for vulnerabilities
       uses: aquasecurity/trivy-action@master
@@ -91,23 +88,20 @@ jobs:
         vuln-type: 'os,library'
         severity: 'CRITICAL,HIGH'
 
-    # Frontend Build and Push with Kaniko
-    - name: Frontend - Build and push with Kaniko
-      uses: imjasonh/setup-kaniko@v0.1
-      with:
-        kaniko-version: latest
-
+    # Frontend Build and Push
     - name: Frontend - Build and push image
-      run: |
-        /kaniko/executor \
-          --context ${{ github.workspace }}/front \
-          --dockerfile ${{ github.workspace }}/front/Dockerfile \
-          --destination ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}:{{ version }} \
-          --destination ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}:{{ major }}.{{ minor }} \
-          --destination ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}:{{ major }} \
-          --destination ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}:latest \
-          --cache=true \
-          --cache-repo ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}/cache
+      uses: int128/kaniko-action@v1
+      with:
+        image: ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}
+        tags: |
+          {{ version }}
+          {{ major }}.{{ minor }}
+          {{ major }}
+          latest
+        cache: true
+        cache-repo: ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}/cache
+        context: ./front
+        dockerfile: ./front/Dockerfile
 
     - name: Frontend - Scan image for vulnerabilities
       uses: aquasecurity/trivy-action@master
