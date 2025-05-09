@@ -1,0 +1,175 @@
+name: Release
+
+on:
+  release:
+    types: [created]
+
+env:
+  REGISTRY: ghcr.io
+  API_IMAGE_NAME: ${{ github.repository }}/api
+  FRONTEND_IMAGE_NAME: ${{ github.repository }}/frontend
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: './front/package-lock.json'
+
+    # API Tests and Build
+    - name: API - Install dependencies
+      working-directory: ./api
+      run: go mod download
+
+    - name: API - Run golangci-lint
+      uses: golangci/golangci-lint-action@v3
+      with:
+        version: latest
+        working-directory: ./api
+
+    - name: API - Run tests
+      working-directory: ./api
+      run: go test -v ./...
+
+    # Frontend Tests and Build
+    - name: Frontend - Install dependencies
+      working-directory: ./front
+      run: npm ci
+
+    - name: Frontend - Run ESLint
+      working-directory: ./front
+      run: npm run lint
+
+  build-and-push:
+    needs: test
+    runs-on: github-runner-do
+    env:
+      # github.repository as <account>/<repo>
+      IMAGE_NAME_API: "dodle-api"
+      IMAGE_NAME_FRONT: "dodle-front"
+      DOCKER_USERNAME: "dopolytech"
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+      security-events: write
+      actions: read
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Log in to the Container registry
+      uses: docker/login-action@v3.3.0
+      with:
+        username: ${{ env.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_TOKEN }}
+
+    - name: Pull images for cache
+      run: |
+        docker pull '${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME_API }}:latest' || true
+        docker pull '${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME_FRONT }}:latest' || true
+
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@v5.7.0
+      with:
+        images: ${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME_FRONT }}
+        tags: |
+          type=raw,value=latest,enable={{is_default_branch}}
+          type=semver,pattern={{version}}
+
+    - name: Build frontend docker image
+      run: |
+        docker build \
+          --cache-to type=inline \
+          --cache-from 'type=registry,ref=${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME_FRONT }}:latest' \
+          -t ${{ env.IMAGE_NAME_FRONT }} ./front
+
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@0.28.0
+      with:
+        image-ref: ${{ env.IMAGE_NAME_FRONT }}
+        format: 'json'
+        exit-code: '0'
+        ignore-unfixed: true
+        vuln-type: 'os,library'
+        output: 'trivy-results.json'
+        severity: 'CRITICAL,HIGH'
+
+    - name: Upload Vulnerability Scan Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: trivy-report
+        path: trivy-report-front.json
+        retention-days: 7
+
+    - name: Tag frontend docker image
+      if: ${{ steps.meta.outputs.tags != '' }}
+      run: |
+        echo ${{ steps.meta.outputs.tags }} | xargs -n1 docker tag ${{ env.IMAGE_NAME_FRONT }}
+
+    - name: Push frontend docker images
+      if: ${{ steps.meta.outputs.tags != '' }}
+      run: |
+        docker push -a '${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME_FRONT }}'
+
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@v5.7.0
+      with:
+        images: ${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME_API }}
+        tags: |
+          type=raw,value=latest,enable={{is_default_branch}}
+          type=semver,pattern={{version}}
+
+    - name: Build api docker image
+      run: |
+        docker build \
+          --cache-to type=inline \
+          --cache-from 'type=registry,ref=${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME_API }}:latest' \
+          -t ${{ env.IMAGE_NAME_API }} ./api
+
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@0.28.0
+      with:
+        image-ref: ${{ env.IMAGE_NAME_API }}
+        format: 'json'
+        exit-code: '0'
+        ignore-unfixed: true
+        vuln-type: 'os,library'
+        output: 'trivy-results.json'
+        severity: 'CRITICAL,HIGH'
+
+    - name: Upload Vulnerability Scan Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: trivy-report
+        path: trivy-report-api.json
+        retention-days: 7
+
+    - name: Tag api docker image
+      if: ${{ steps.meta.outputs.tags != '' }}
+      run: |
+        echo ${{ steps.meta.outputs.tags }} | xargs -n1 docker tag ${{ env.IMAGE_NAME_API }}
+
+    - name: Push api docker images
+      if: ${{ steps.meta.outputs.tags != '' }}
+      run: |
+        docker push -a '${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME_API }}'

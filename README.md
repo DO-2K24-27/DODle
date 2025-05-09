@@ -33,6 +33,14 @@ Every day we will pick a new person from the database and store it in the databa
 Every day we will reset the database of guesses
 Every month we will reset the database of leaderboard
 
+## Database
+
+Users (id, username, password, created_at)
+Persons (id, firstname, lastname, gender, type, workplace, image, hint, created_at)
+GuessPersons (id, #id_person, date)
+GuessesCache (id, #id_user, #id_person, date, created_at)
+GuessesOfTheMonth (id, #id_user, #id_person, date, score, created_at)
+
 ## Participants
 
 - Pierre-Louis will handle the backend
