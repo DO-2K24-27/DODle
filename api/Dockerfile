@@ -8,6 +8,7 @@ RUN apk add --no-cache git
 
 # Copy go mod files
 COPY go.mod ./
+COPY go.sum ./
 
 # Download dependencies
 RUN go mod download
@@ -25,6 +26,7 @@ WORKDIR /app
 
 # Copy the binary from builder
 COPY --from=builder /app/main .
+COPY --from=builder /app/data ./data
 
 # Expose port
 EXPOSE 8080

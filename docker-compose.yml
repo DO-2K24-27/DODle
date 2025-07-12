@@ -10,14 +10,11 @@ services:
       - "8080:8080"
     environment:
       - NODE_ENV=production
-      - DB_HOST=database
-      - DB_PORT=5432
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
-      - DB_NAME=postgres
+      - MONGODB_URI=mongodb://admin:admin@dodle-database-1:27017
+      - MONGODB_DATABASE=dodle
     depends_on:
       database:
-        condition: service_healthy
+        condition: service_started
     networks:
       - app-network
 
@@ -36,22 +33,21 @@ services:
       - app-network
 
   database:
-    image: postgres:17
+    image: mongo:7
     environment:
-      - POSTGRES_PASSWORD=postgres
+      - MONGO_INITDB_DATABASE=dodle
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      - mongodb_data:/home/pierre-louis/temp/mongodb
     networks:
       - app-network
+    ports:
+      - "27017:27017"
 
 networks:
   app-network:
     driver: bridge
 
 volumes:
-  postgres_data: 
+  mongodb_data: 
