@@ -39,6 +39,7 @@ jobs:
       with:
         version: latest
         working-directory: ./api
+        args: --out-format=colored-line-number
 
     - name: Run tests
       run: go test -v ./...
