@@ -1,9 +1,10 @@
 package data
 
 import (
+	persons "api/struct"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 )
 
