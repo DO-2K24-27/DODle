@@ -4,7 +4,6 @@ import (
 	db "api/db"
 	persons "api/struct"
 	apisecurity "api/utils/api_security"
-	data "api/utils/data"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -247,10 +246,10 @@ func main() {
 	if mongoURI == "" {
 		// Default URI with authentication
 		mongoURI = "mongodb://admin:admin@localhost:27017"
-	}
 
-	// Override MongoDB URI environment variable
-	os.Setenv("MONGODB_URI", mongoURI)
+		// Override MongoDB URI environment variable
+		os.Setenv("MONGODB_URI", mongoURI)
+	}
 
 	// Connect to MongoDB
 	mongoClient, err := db.ConnectToMongoDB()
