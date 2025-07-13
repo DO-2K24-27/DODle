@@ -255,3 +255,34 @@ func DeletePersonOfTheDay(client *mongo.Client, dbName string, date string) erro
 
 	return nil
 }
+
+func InitDB(mongoClient *mongo.Client) error {
+	db.CreateDatabase(mongoClient, "dodle")
+	fmt.Println("Creating collections...")
+	db.CreateCollection(mongoClient, "dodle", "Persons")
+	db.CreateCollection(mongoClient, "dodle", "GuessesOfTheMonth")
+
+	// Load persons from file
+	persons, err := OpenPersonsFile()
+	if err != nil {
+		return fmt.Errorf("failed to open persons file: %v", err)
+	}
+
+	// Check if collection is empty before populating
+	existingPersons, err := db.GetPersons(mongoClient, "dodle")
+	if err != nil {
+		return fmt.Errorf("failed to check existing persons: %v", err)
+	}
+
+	if len(existingPersons.Persons) == 0 {
+		fmt.Println("Populating Persons collection...")
+		result := db.PopulatePersonsCollection(mongoClient, "dodle", persons)
+		if result != "" {
+			return fmt.Errorf("failed to populate persons collection: %s", result)
+		}
+	} else {
+		fmt.Println("Persons collection already contains data, skipping population")
+	}
+
+	return nil
+}

@@ -3,6 +3,7 @@ package main
 import (
 	db "api/db"
 	persons "api/struct"
+	apisecurity "api/utils/api_security"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -17,16 +18,16 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func helloHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/hello" {
+func healthHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/health" {
 		http.NotFound(w, r)
 		return
 	}
-	fmt.Fprintf(w, "Hello world!")
+	fmt.Fprintf(w, "Healthy")
 }
 
 func getPersons(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/persons" {
+	if r.URL.Path != "/public/v1/persons" {
 		http.NotFound(w, r)
 		return
 	}
@@ -52,8 +53,13 @@ func getPersons(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetPersonsOfTheDay(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/guess/persons" {
+	if r.URL.Path != "/private/v1/guess/persons" {
 		http.NotFound(w, r)
+		return
+	}
+
+	if !apisecurity.IsAuthorized(r) {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
@@ -78,8 +84,13 @@ func GetPersonsOfTheDay(w http.ResponseWriter, r *http.Request) {
 }
 
 func CreatePersonOfTheDay(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/guess/person/create" {
+	if r.URL.Path != "/private/v1/guess/person/create" {
 		http.NotFound(w, r)
+		return
+	}
+
+	if !apisecurity.IsAuthorized(r) {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
@@ -94,37 +105,6 @@ func CreatePersonOfTheDay(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintln(w, "Person of the day updated successfully")
-}
-
-func initDB(mongoClient *mongo.Client) error {
-	db.CreateDatabase(mongoClient, "dodle")
-	fmt.Println("Creating collections...")
-	db.CreateCollection(mongoClient, "dodle", "Persons")
-	db.CreateCollection(mongoClient, "dodle", "GuessesOfTheMonth")
-
-	// Load persons from file
-	persons, err := OpenPersonsFile()
-	if err != nil {
-		return fmt.Errorf("failed to open persons file: %v", err)
-	}
-
-	// Check if collection is empty before populating
-	existingPersons, err := db.GetPersons(mongoClient, "dodle")
-	if err != nil {
-		return fmt.Errorf("failed to check existing persons: %v", err)
-	}
-
-	if len(existingPersons.Persons) == 0 {
-		fmt.Println("Populating Persons collection...")
-		result := db.PopulatePersonsCollection(mongoClient, "dodle", persons)
-		if result != "" {
-			return fmt.Errorf("failed to populate persons collection: %s", result)
-		}
-	} else {
-		fmt.Println("Persons collection already contains data, skipping population")
-	}
-
-	return nil
 }
 
 func OpenPersonsFile() (persons.Persons, error) {
@@ -209,7 +189,7 @@ func UpdatePersonOfTheDay(mongoClient *mongo.Client) error {
 }
 
 func GuessPersonOfTheDay(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/guess/person/submit" {
+	if r.URL.Path != "/public/v1/guess/person/submit" {
 		http.NotFound(w, r)
 		return
 	}
@@ -246,7 +226,7 @@ func GuessPersonOfTheDay(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetHint(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/guess/person/hint" {
+	if r.URL.Path != "/public/v1/guess/person/hint" {
 		http.NotFound(w, r)
 		return
 	}
@@ -308,7 +288,7 @@ func main() {
 	fmt.Println("Connected to MongoDB successfully!")
 
 	// Initialize database
-	if err := initDB(mongoClient); err != nil {
+	if err := db.InitDB(mongoClient); err != nil {
 		log.Fatalf("Failed to initialize database: %v", err)
 	}
 
@@ -316,7 +296,7 @@ func main() {
 	mux := http.NewServeMux()
 
 	// Register handlers
-	mux.HandleFunc("/hello", helloHandler)
+	mux.HandleFunc("/health", healthHandler)
 
 	// Wrap handlers with MongoDB client middleware
 	personsHandler := http.HandlerFunc(getPersons)
@@ -324,11 +304,11 @@ func main() {
 	createPODHandler := http.HandlerFunc(CreatePersonOfTheDay)
 	guessPersonHandler := http.HandlerFunc(GuessPersonOfTheDay)
 	getHintHandler := http.HandlerFunc(GetHint)
-	mux.Handle("/persons", withMongoClient(personsHandler, mongoClient))
-	mux.Handle("/guess/persons", withMongoClient(guessHandler, mongoClient))
-	mux.Handle("/guess/person/create", withMongoClient(createPODHandler, mongoClient))
-	mux.Handle("/guess/person/submit", withMongoClient(guessPersonHandler, mongoClient))
-	mux.Handle("/guess/person/hint", withMongoClient(getHintHandler, mongoClient))
+	mux.Handle("/public/v1/persons", withMongoClient(personsHandler, mongoClient))
+	mux.Handle("/private/v1/guess/persons", withMongoClient(guessHandler, mongoClient))
+	mux.Handle("/private/v1/guess/person/create", withMongoClient(createPODHandler, mongoClient))
+	mux.Handle("/public/v1/guess/person/submit", withMongoClient(guessPersonHandler, mongoClient))
+	mux.Handle("/public/v1/guess/person/hint", withMongoClient(getHintHandler, mongoClient))
 
 	fmt.Println("Server starting on :8080...")
 	if err := http.ListenAndServe(":8080", mux); err != nil {
