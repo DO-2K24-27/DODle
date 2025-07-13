@@ -5,7 +5,7 @@ Like wordle but guess DO related people
 
 - For front we will use Next.js
 - For backend we will use Go
-- For database we will use PostgreSQL
+- For database we will use MongoDB
 - For deployment we will use Docker Container and Kubernetes
 - For hosting we will use our hardware
 - For CI/CD we will use Github Actions
@@ -36,7 +36,7 @@ Every month we will reset the database of leaderboard
 ## Database
 
 Users (id, username, password, created_at)
-Persons (id, firstname, lastname, gender, type, workplace, image, hint, created_at)
+Persons (id, firstname, lastname, gender, type, workplace, image, hint)
 GuessPersons (id, #id_person, date)
 GuessesCache (id, #id_user, #id_person, date, created_at)
 GuessesOfTheMonth (id, #id_user, #id_person, date, score, created_at)

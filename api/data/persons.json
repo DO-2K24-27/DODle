@@ -1,0 +1,6 @@
+[
+    {"firstname": "John", "lastname": "Doe", "gender": "Homme", "type": "Professeur", "workplace": "Université de Paris", "image": "https://via.placeholder.com/150", "hint": "Professeur de mathématiques"},
+    {"firstname": "Rémi", "lastname": "Gaillard", "gender": "Autre", "type": "Étudiant", "workplace": "Université de Montpellier", "image": "https://via.placeholder.com/150", "hint": "Professeur de mathématiques"},
+    {"firstname": "Mami", "lastname": "Twink", "gender": "Homme", "type": "IP", "workplace": "Université de Nimes", "image": "https://via.placeholder.com/150", "hint": "Professeur de mathématiques"},
+    {"firstname": "Moi", "lastname": "Toi", "gender": "Femme", "type": "Professeur", "workplace": "Université de Paris", "image": "https://via.placeholder.com/150", "hint": "Professeur de mathématiques"}
+]

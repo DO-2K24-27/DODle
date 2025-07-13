@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   api:
-    image: ${REGISTRY:-ghcr.io}/${GITHUB_REPOSITORY:-your-username/your-repo}/api:latest
+    image: dopolytech/dodle-api:latest
     build:
       context: ./api
       dockerfile: Dockerfile
@@ -10,11 +10,17 @@ services:
       - "8080:8080"
     environment:
       - NODE_ENV=production
+      - MONGODB_URI=mongodb://admin:admin@dodle-database-1:27017
+      - MONGODB_DATABASE=dodle
+      - API_TOKEN=your_api_token_here
+    depends_on:
+      database:
+        condition: service_started
     networks:
       - app-network
 
   frontend:
-    image: ${REGISTRY:-ghcr.io}/${GITHUB_REPOSITORY:-your-username/your-repo}/frontend:latest
+    image: dopolytech/dodle-front:latest
     build:
       context: ./front
       dockerfile: Dockerfile
@@ -27,6 +33,22 @@ services:
     networks:
       - app-network
 
+  database:
+    image: mongo:7
+    environment:
+      - MONGO_INITDB_DATABASE=dodle
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+    volumes:
+      - mongodb_data:/home/pierre-louis/temp/mongodb
+    networks:
+      - app-network
+    ports:
+      - "27017:27017"
+
 networks:
   app-network:
-    driver: bridge 
+    driver: bridge
+
+volumes:
+  mongodb_data: 
