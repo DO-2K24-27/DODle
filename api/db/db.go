@@ -2,6 +2,7 @@ package db
 
 import (
 	persons "api/struct"
+	data "api/utils/data"
 	"context"
 	"fmt"
 	"log"
@@ -263,7 +264,7 @@ func InitDB(mongoClient *mongo.Client) error {
 	db.CreateCollection(mongoClient, "dodle", "GuessesOfTheMonth")
 
 	// Load persons from file
-	persons, err := OpenPersonsFile()
+	persons, err := data.OpenPersonsFile()
 	if err != nil {
 		return fmt.Errorf("failed to open persons file: %v", err)
 	}
