@@ -12,6 +12,7 @@ services:
       - NODE_ENV=production
       - MONGODB_URI=mongodb://admin:admin@dodle-database-1:27017
       - MONGODB_DATABASE=dodle
+      - API_TOKEN=your_api_token_here
     depends_on:
       database:
         condition: service_started
