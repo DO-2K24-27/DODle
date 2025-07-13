@@ -287,3 +287,61 @@ func InitDB(mongoClient *mongo.Client) error {
 
 	return nil
 }
+
+func UpdatePersonOfTheDay(mongoClient *mongo.Client) error {
+	previousPersons, err := GetPersonsOfTheDay(mongoClient, "dodle")
+	if err != nil {
+		return fmt.Errorf("failed to get previous persons of the day: %v", err)
+	}
+
+	personsAvailable, err := GetPersons(mongoClient, "dodle")
+	if err != nil {
+		return fmt.Errorf("failed to get persons: %v", err)
+	}
+
+	if len(personsAvailable.Persons) == 0 {
+		return fmt.Errorf("no persons available to update person of the day")
+	}
+
+	isSelectable := false
+	candidate := personsAvailable.Persons[rand.Intn(len(personsAvailable.Persons))]
+	fmt.Println("New candidate for person of the day:", candidate.Firstname, candidate.Lastname)
+	for i := 0; i < len(personsAvailable.Persons); i++ {
+		candidate = personsAvailable.Persons[rand.Intn(len(personsAvailable.Persons))]
+		isSelectable = true
+		for _, person := range previousPersons {
+			if person.Firstname == candidate.Firstname && person.Lastname == candidate.Lastname {
+				isSelectable = false
+			}
+		}
+
+		if isSelectable {
+			break
+		}
+	}
+
+	dateOfToday := time.Now().Format("2006-01-02")
+
+	// If we already selected a candidate today we delete the previous one
+	if GetPersonOfTheDay, err := GetPersonOfTheDay(mongoClient, "dodle"); err == nil {
+		if GetPersonOfTheDay.Firstname != "" {
+			if err := DeletePersonOfTheDay(mongoClient, "dodle", dateOfToday); err != nil {
+				return fmt.Errorf("failed to delete previous person of the day: %v", err)
+			}
+			fmt.Println("Previous person of the day deleted successfully")
+		}
+	}
+
+	if err := CreatePersonOfTheDay(mongoClient, "dodle", candidate); err != nil {
+		return fmt.Errorf("failed to create person of the day: %v", err)
+	}
+
+	dateToDelete := time.Now().AddDate(0, 0, -10).Format("2006-01-02")
+
+	if err := DeletePersonOfTheDay(mongoClient, "dodle", dateToDelete); err != nil {
+		return fmt.Errorf("failed to delete previous person of the day: %v", err)
+	}
+	fmt.Println("Previous person of the day deleted successfully")
+	// You can add your logic here to update the person of the day in the database.
+	return nil
+}
