@@ -4,6 +4,7 @@ import (
 	db "api/db"
 	persons "api/struct"
 	apisecurity "api/utils/api_security"
+	data "api/utils/data"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -58,6 +59,7 @@ func GetPersonsOfTheDay(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Check if the request is authorized with API token
 	if !apisecurity.IsAuthorized(r) {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
@@ -89,6 +91,7 @@ func CreatePersonOfTheDay(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Check if the request is authorized with API token
 	if !apisecurity.IsAuthorized(r) {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
@@ -105,29 +108,6 @@ func CreatePersonOfTheDay(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintln(w, "Person of the day updated successfully")
-}
-
-func OpenPersonsFile() (persons.Persons, error) {
-	jsonFile, err := os.Open("./data/persons.json")
-	if err != nil {
-		return persons.Persons{}, fmt.Errorf("error opening file: %v", err)
-	}
-	defer jsonFile.Close()
-
-	// Read the content of the file
-	content, err := io.ReadAll(jsonFile)
-	if err != nil {
-		return persons.Persons{}, fmt.Errorf("error reading file: %v", err)
-	}
-
-	// Unmarshal the JSON data into the struct
-	var personsList []persons.Person
-	err = json.Unmarshal(content, &personsList)
-	if err != nil {
-		return persons.Persons{}, fmt.Errorf("error unmarshaling JSON: %v", err)
-	}
-
-	return persons.Persons{Persons: personsList}, nil
 }
 
 func UpdatePersonOfTheDay(mongoClient *mongo.Client) error {
