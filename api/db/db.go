@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"time"
+	"math/rand"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -258,10 +259,10 @@ func DeletePersonOfTheDay(client *mongo.Client, dbName string, date string) erro
 }
 
 func InitDB(mongoClient *mongo.Client) error {
-	db.CreateDatabase(mongoClient, "dodle")
+	CreateDatabase(mongoClient, "dodle")
 	fmt.Println("Creating collections...")
-	db.CreateCollection(mongoClient, "dodle", "Persons")
-	db.CreateCollection(mongoClient, "dodle", "GuessesOfTheMonth")
+	CreateCollection(mongoClient, "dodle", "Persons")
+	CreateCollection(mongoClient, "dodle", "GuessesOfTheMonth")
 
 	// Load persons from file
 	persons, err := data.OpenPersonsFile()
@@ -270,14 +271,14 @@ func InitDB(mongoClient *mongo.Client) error {
 	}
 
 	// Check if collection is empty before populating
-	existingPersons, err := db.GetPersons(mongoClient, "dodle")
+	existingPersons, err := GetPersons(mongoClient, "dodle")
 	if err != nil {
 		return fmt.Errorf("failed to check existing persons: %v", err)
 	}
 
 	if len(existingPersons.Persons) == 0 {
 		fmt.Println("Populating Persons collection...")
-		result := db.PopulatePersonsCollection(mongoClient, "dodle", persons)
+		result := PopulatePersonsCollection(mongoClient, "dodle", persons)
 		if result != "" {
 			return fmt.Errorf("failed to populate persons collection: %s", result)
 		}

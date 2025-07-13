@@ -2,19 +2,12 @@ package main
 
 import (
 	db "api/db"
-	persons "api/struct"
-	apisecurity "api/utils/api_security"
 	routes "api/utils/routes"
 	"context"
-	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"os"
-	"time"
-
-	"math/rand"
 
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -65,18 +58,22 @@ func main() {
 
 	// Wrap handlers with MongoDB client middleware
 	personsHandler := http.HandlerFunc(routes.GetPersons)
-	guessHandler := http.HandlerFunc(routes.GetPersonsOfTheDay)
+	guessesHandler := http.HandlerFunc(routes.GetPersonsOfTheDay)
+	guessHandler := http.HandlerFunc(routes.GetPersonOfTheDay)
 	createPODHandler := http.HandlerFunc(routes.CreatePersonOfTheDay)
 	guessPersonHandler := http.HandlerFunc(routes.GuessPersonOfTheDay)
 	getHintHandler := http.HandlerFunc(routes.GetHint)
+	
 
 	// Register handlers
 	mux.HandleFunc("/health", routes.HealthHandler)
 	mux.Handle("/public/v1/persons", withMongoClient(personsHandler, mongoClient))
-	mux.Handle("/private/v1/guess/persons", withMongoClient(guessHandler, mongoClient))
-	mux.Handle("/private/v1/guess/person/create", withMongoClient(createPODHandler, mongoClient))
 	mux.Handle("/public/v1/guess/person/submit", withMongoClient(guessPersonHandler, mongoClient))
 	mux.Handle("/public/v1/guess/person/hint", withMongoClient(getHintHandler, mongoClient))
+
+	mux.Handle("/private/v1/guess/persons", withMongoClient(guessesHandler, mongoClient))
+	mux.Handle("/private/v1/guess/persons/today", withMongoClient(guessHandler, mongoClient))
+	mux.Handle("/private/v1/guess/person/create", withMongoClient(createPODHandler, mongoClient))
 
 	fmt.Println("Server starting on :8080...")
 	if err := http.ListenAndServe(":8080", mux); err != nil {
