@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: riversong-backend
+spec:
+  selector:
+    matchLabels:
+      app: riversong-backend
+  template:
+    metadata:
+      labels:
+        app: riversong-backend
+    spec:
+      containers:
+        - name: backend
+          image: proxyfil/riversong-back:stable
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: riversong-backend-secret
+                  key: MONGO_URI
+            - name: PORT
+              value: "3000"
+            - name: HOST
+              value: "0.0.0.0"
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: riversong-backend-secret
+                  key: JWT_SECRET
+            - name: JWT_EXPIRES_IN
+              value: "1h"
+            - name: MONGO_DB_NAME
+              value: "riversong"
+          volumeMounts:
+            - name: uploads
+              mountPath: /usr/src/app/uploads
+          livenessProbe:
+            httpGet:
+              path: /docs
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 30
+      volumes:
+        - name: uploads
+          persistentVolumeClaim:
+            claimName: riversong-uploads-pvc

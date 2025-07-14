@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: riversong-frontend
+spec:
+  selector:
+    matchLabels:
+      app: riversong-frontend
+  template:
+    metadata:
+      labels:
+        app: riversong-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: proxyfil/riversong-front:stable
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: RIVERSONG_API_URL
+              value: "https://api-riversong.do-polytech.fr"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 30

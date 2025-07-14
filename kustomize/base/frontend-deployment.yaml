@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dodle-frontend
+spec:
+  revisionHistoryLimit : 0
+  selector:
+    matchLabels:
+      app: dodle-frontend
+  template:
+    metadata:
+      labels:
+        app: dodle-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: proxyfil/dodle-frontend:main
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 30

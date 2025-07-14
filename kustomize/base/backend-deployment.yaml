@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dodle-backend
+spec:
+  revisionHistoryLimit : 0
+  selector:
+    matchLabels:
+      app: dodle-backend
+  template:
+    metadata:
+      labels:
+        app: dodle-backend
+    spec:
+      containers:
+        - name: backend
+          image: proxyfil/dodle-backend:main
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: dodle-backend-secret
+                  key: MONGO_URI
+            - name: MONGODB_DATABASE
+              value: "dodle"
+            - name: API_TOKEN
+              value: "your_api_token_here"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 30
