@@ -62,6 +62,12 @@ func PopulatePersonsCollection(client *mongo.Client, dbName string, personsToIns
 		return "Failed to access Persons collection"
 	}
 
+	// Delete existing documents in the collection
+	_, err := collection.DeleteMany(context.TODO(), map[string]interface{}{})
+	if err != nil {
+		return "Failed to delete existing documents: " + err.Error()
+	}
+
 	// Insert persons into the collection
 	personsInterface := []interface{}{}
 	for _, person := range personsToInsert.Persons {
@@ -276,14 +282,10 @@ func InitDB(mongoClient *mongo.Client) error {
 		return fmt.Errorf("failed to check existing persons: %v", err)
 	}
 
-	if len(existingPersons.Persons) == 0 {
-		fmt.Println("Populating Persons collection...")
-		result := PopulatePersonsCollection(mongoClient, "dodle", persons)
-		if result != "" {
-			return fmt.Errorf("failed to populate persons collection: %s", result)
-		}
-	} else {
-		fmt.Println("Persons collection already contains data, skipping population")
+	fmt.Println("Populating Persons collection...")
+	result := PopulatePersonsCollection(mongoClient, "dodle", persons)
+	if result != "" {
+		return fmt.Errorf("failed to populate persons collection: %s", result)
 	}
 
 	return nil
