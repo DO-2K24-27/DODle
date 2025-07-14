@@ -174,3 +174,49 @@ func GetPersonOfTheDay(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+// Route : /public/v1/persons/yesterday
+func GetPersonOfYesterday(w http.ResponseWriter, r *http.Request) {
+
+	// Get MongoDB client from context
+	mongoClient := r.Context().Value("mongoClient").(*mongo.Client)
+
+	// Get person of yesterday
+	personOfYesterday, err := db.GetPersonOfYesterday(mongoClient, "dodle")
+	if err != nil {
+		http.Error(w, "Failed to get person of yesterday: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Set response headers
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	if err := json.NewEncoder(w).Encode(personOfYesterday); err != nil {
+		http.Error(w, "Failed to encode response: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+// Route : /public/v1/guess/id
+func GetGuessID(w http.ResponseWriter, r *http.Request) {
+
+	// Get MongoDB client from context
+	mongoClient := r.Context().Value("mongoClient").(*mongo.Client)
+
+	id, error := db.GetGuessID(mongoClient, "dodle")
+
+	if id == "" || error != nil {
+		http.Error(w, "No guess found for today", http.StatusNotFound)
+		return
+	}
+
+	// Set response headers
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	if err := json.NewEncoder(w).Encode(map[string]string{"id": id}); err != nil {
+		http.Error(w, "Failed to encode response: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+}

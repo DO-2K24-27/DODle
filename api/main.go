@@ -63,16 +63,19 @@ func main() {
 	createPODHandler := http.HandlerFunc(routes.CreatePersonOfTheDay)
 	guessPersonHandler := http.HandlerFunc(routes.GuessPersonOfTheDay)
 	getHintHandler := http.HandlerFunc(routes.GetHint)
-	
+	getYesterdayHandler := http.HandlerFunc(routes.GetPersonOfYesterday)
+	GetGuessIDHandler := http.HandlerFunc(routes.GetGuessID)
 
 	// Register handlers
 	mux.HandleFunc("/health", routes.HealthHandler)
 	mux.Handle("/public/v1/persons", withMongoClient(personsHandler, mongoClient))
 	mux.Handle("/public/v1/guess/person/submit", withMongoClient(guessPersonHandler, mongoClient))
 	mux.Handle("/public/v1/guess/person/hint", withMongoClient(getHintHandler, mongoClient))
+	mux.Handle("/public/v1/guess/person/yesterday", withMongoClient(getYesterdayHandler, mongoClient))
+	mux.Handle("/public/v1/guess/id", withMongoClient(GetGuessIDHandler, mongoClient))
 
 	mux.Handle("/private/v1/guess/persons", withMongoClient(guessesHandler, mongoClient))
-	mux.Handle("/private/v1/guess/persons/today", withMongoClient(guessHandler, mongoClient))
+	mux.Handle("/private/v1/guess/person/today", withMongoClient(guessHandler, mongoClient))
 	mux.Handle("/private/v1/guess/person/create", withMongoClient(createPODHandler, mongoClient))
 
 	fmt.Println("Server starting on :8080...")

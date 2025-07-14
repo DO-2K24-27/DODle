@@ -346,3 +346,61 @@ func UpdatePersonOfTheDay(mongoClient *mongo.Client) error {
 	// You can add your logic here to update the person of the day in the database.
 	return nil
 }
+
+func GetPersonOfYesterday(client *mongo.Client, dbName string) (persons.Person, error) {
+	// Retrieve the person of yesterday from the GuessesOfTheMonth collection
+	collection := client.Database(dbName).Collection("GuessesOfTheMonth")
+	if collection == nil {
+		return persons.Person{}, fmt.Errorf("GuessesOfTheMonth collection not found")
+	}
+
+	yesterday := time.Now().AddDate(0, 0, -1).Format("2006-01-02") // Format the date as YYYY-MM-DD
+
+	var doc struct {
+		Date   string         `bson:"date"`
+		Person persons.Person `bson:"person"`
+	}
+
+	err := collection.FindOne(context.TODO(), map[string]interface{}{"date": yesterday}).Decode(&doc)
+	if err != nil {
+		return persons.Person{}, fmt.Errorf("failed to find person of yesterday: %v", err)
+	}
+
+	return doc.Person, nil
+}
+
+func GetGuessID(client *mongo.Client, dbName string) (string, error) {
+	// Retrieve the ID of the guess from the GuessesOfTheMonth collection
+	collection := client.Database(dbName).Collection("GuessesOfTheMonth")
+	if collection == nil {
+		return "", fmt.Errorf("GuessesOfTheMonth collection not found")
+	}
+
+	cursor, err := collection.Find(context.TODO(), map[string]interface{}{})
+	if err != nil {
+		return "", fmt.Errorf("failed to find persons of the day: %v", err)
+	}
+	defer cursor.Close(context.TODO())
+
+	var doc struct {
+		ID     string         `bson:"_id"`
+		Date   string         `bson:"date"`
+		Person persons.Person `bson:"person"`
+	}
+
+	var guesses []string
+	for cursor.Next(context.TODO()) {
+
+		if err := cursor.Decode(&doc); err != nil {
+			return "", fmt.Errorf("failed to decode document: %v", err)
+		}
+
+		guesses = append(guesses, doc.ID)
+	}
+
+	if (len(guesses) == 0) {
+		return "", fmt.Errorf("no guesses found for today")
+	}
+	
+	return guesses[len(guesses)-1], nil
+}
