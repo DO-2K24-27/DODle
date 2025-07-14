@@ -1,32 +1,31 @@
-# Build stage
-FROM node:20-alpine AS builder
+FROM node:20-alpine AS build
 
+# Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy package.json and package-lock.json
+COPY package.json package-lock.json ./
 
 # Install dependencies
 RUN npm ci
 
-# Copy source code
+# Copy all files
 COPY . .
 
 # Build the application
 RUN npm run build
 
 # Production stage
-FROM nginx:alpine
+FROM nginx:stable-alpine AS production
 
-# Copy nginx configuration
+# Copy built app to nginx server
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Copy custom nginx config to handle Vue Router's history mode
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copy static files from builder
-COPY --from=builder /app/.next/static /usr/share/nginx/html/_next/static
-COPY --from=builder /app/public /usr/share/nginx/html/public
-
-# Expose port
+# Expose port 80
 EXPOSE 80
 
 # Start nginx
-CMD ["nginx", "-g", "daemon off;"] 
+CMD ["nginx", "-g", "daemon off;"]
