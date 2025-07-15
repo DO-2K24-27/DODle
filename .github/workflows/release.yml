@@ -62,7 +62,7 @@ jobs:
       # github.repository as <account>/<repo>
       IMAGE_NAME_API: "dodle-api"
       IMAGE_NAME_FRONT: "dodle-front"
-      DOCKER_USERNAME: "dopolytech"
+      DOCKER_USERNAME: "proxyfil"
     permissions:
       contents: read
       packages: write

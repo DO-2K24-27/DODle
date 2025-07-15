@@ -45,7 +45,7 @@ jobs:
     env:
       # github.repository as <account>/<repo>
       IMAGE_NAME: "dodle-front"
-      DOCKER_USERNAME: "dopolytech"
+      DOCKER_USERNAME: "proxyfil"
     permissions:
       contents: read
       packages: write
