@@ -6,9 +6,9 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
 	"time"
-	"math/rand"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -76,7 +76,7 @@ func PopulatePersonsCollection(client *mongo.Client, dbName string, personsToIns
 	if len(personsInterface) == 0 {
 		return "No persons to insert"
 	}
-	_, err := collection.InsertMany(context.TODO(), personsInterface)
+	_, err = collection.InsertMany(context.TODO(), personsInterface)
 	if err != nil {
 		return "Failed to insert persons: " + err.Error()
 	}
@@ -276,12 +276,6 @@ func InitDB(mongoClient *mongo.Client) error {
 		return fmt.Errorf("failed to open persons file: %v", err)
 	}
 
-	// Check if collection is empty before populating
-	existingPersons, err := GetPersons(mongoClient, "dodle")
-	if err != nil {
-		return fmt.Errorf("failed to check existing persons: %v", err)
-	}
-
 	fmt.Println("Populating Persons collection...")
 	result := PopulatePersonsCollection(mongoClient, "dodle", persons)
 	if result != "" {
@@ -400,9 +394,9 @@ func GetGuessID(client *mongo.Client, dbName string) (string, error) {
 		guesses = append(guesses, doc.ID)
 	}
 
-	if (len(guesses) == 0) {
+	if len(guesses) == 0 {
 		return "", fmt.Errorf("no guesses found for today")
 	}
-	
+
 	return guesses[len(guesses)-1], nil
 }
