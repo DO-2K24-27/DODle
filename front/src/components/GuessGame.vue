@@ -99,7 +99,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue';
 import { apiService } from '@/services/api';
-import type { Person, GuessResult, GuessHistory } from '@/types/person';
+import type { Person, GuessHistory } from '@/types/person';
 
 const persons = ref<Person[]>([]);
 const selectedPersonIndex = ref<string>('');

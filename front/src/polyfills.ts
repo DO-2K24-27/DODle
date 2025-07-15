@@ -14,7 +14,7 @@ declare global {
 }
 
 // Create window.global for use in the app
-window.global = window as any;
+window.global = window as typeof globalThis;
 
 // Handle missing crypto functionality
 if (window.crypto) {
