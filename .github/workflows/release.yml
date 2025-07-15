@@ -72,7 +72,7 @@ jobs:
     - name: Tag frontend docker image
       if: ${{ steps.meta.outputs.tags != '' }}
       run: |
-        echo ${{ steps.meta.outputs.tags }} | xargs -n1 docker tag ${{ env.IMAGE_NAME }}
+        echo "${{ steps.meta.outputs.tags }}" | xargs -n1 docker tag ${{ env.IMAGE_NAME }}
 
     - name: Push frontend docker images
       if: ${{ steps.meta.outputs.tags != '' }}
@@ -145,7 +145,7 @@ jobs:
     - name: Tag frontend docker image
       if: ${{ steps.meta.outputs.tags != '' }}
       run: |
-        echo ${{ steps.meta.outputs.tags }} | xargs -n1 docker tag ${{ env.IMAGE_NAME }}
+        echo "${{ steps.meta.outputs.tags }}" | xargs -n1 docker tag ${{ env.IMAGE_NAME }}
 
     - name: Push frontend docker images
       if: ${{ steps.meta.outputs.tags != '' }}
