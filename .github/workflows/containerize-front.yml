@@ -1,0 +1,89 @@
+name: Containerize
+
+on: 
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/containerize-front.yml'
+      - '!*.md'
+      - 'front/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/containerize-front.yml'
+      - '!*.md'
+      - 'front/**'
+
+jobs:
+  containerize:
+    runs-on: github-runner-do
+    env:
+      # github.repository as <account>/<repo>
+      IMAGE_NAME: "dodle-front"
+      DOCKER_USERNAME: "proxyfil"
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+      security-events: write
+      actions: read
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Log in to the Container registry
+      uses: docker/login-action@v3.3.0
+      with:
+        username: ${{ env.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_TOKEN }}
+
+    - name: Pull images for cache
+      run: |
+        docker pull '${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest' || true
+
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@v5.7.0
+      with:
+        images: ${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=raw,value=latest,enable={{is_default_branch}}
+
+    - name: Build frontend docker image
+      run: |
+        docker build \
+          --cache-to type=inline \
+          --cache-from 'type=registry,ref=${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest' \
+          -t ${{ env.IMAGE_NAME }} ./dohub
+
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@0.28.0
+      with:
+        image-ref: ${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}
+        format: 'json'
+        exit-code: '0'
+        ignore-unfixed: true
+        vuln-type: 'os,library'
+        output: 'trivy-results.json'
+        severity: 'CRITICAL,HIGH'
+
+    - name: Upload Vulnerability Scan Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: trivy-report
+        path: trivy-report.json
+        retention-days: 7
+
+    - name: Tag frontend docker image
+      if: ${{ steps.meta.outputs.tags != '' }}
+      run: |
+        echo ${{ steps.meta.outputs.tags }} | xargs -n1 docker tag ${{ env.IMAGE_NAME }}
+
+    - name: Push frontend docker images
+      if: ${{ steps.meta.outputs.tags != '' }}
+      run: |
+        docker push -a '${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}'
