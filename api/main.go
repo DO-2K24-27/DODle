@@ -2,6 +2,7 @@ package main
 
 import (
 	db "api/db"
+	ctxUtil "api/utils/context"
 	routes "api/utils/routes"
 	"context"
 	"fmt"
@@ -15,7 +16,7 @@ import (
 // Middleware to inject MongoDB client into request context
 func withMongoClient(next http.Handler, client *mongo.Client) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := context.WithValue(r.Context(), "mongoClient", client)
+		ctx := context.WithValue(r.Context(), ctxUtil.MongoClientKey, client)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -30,7 +31,9 @@ func main() {
 		mongoURI = "mongodb://admin:admin@localhost:27017"
 
 		// Override MongoDB URI environment variable
-		os.Setenv("MONGODB_URI", mongoURI)
+		if err := os.Setenv("MONGODB_URI", mongoURI); err != nil {
+			log.Printf("Warning: Failed to set MONGODB_URI environment variable: %v", err)
+		}
 	}
 
 	// Connect to MongoDB

@@ -2,24 +2,28 @@ package routes
 
 import (
 	db "api/db"
-	"go.mongodb.org/mongo-driver/mongo"
-	"net/http"
-	apisecurity "api/utils/apisecurity"
-	"fmt"
-	"encoding/json"
 	persons "api/struct"
+	apisecurity "api/utils/apisecurity"
+	ctxUtil "api/utils/context"
+	"encoding/json"
+	"fmt"
+	"net/http"
+
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // Route : /health
 func HealthHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Healthy")
+	if _, err := fmt.Fprintf(w, "Healthy"); err != nil {
+		http.Error(w, "Failed to write response", http.StatusInternalServerError)
+	}
 }
 
 // Route : /public/v1/persons
 func GetPersons(w http.ResponseWriter, r *http.Request) {
 
 	// Get MongoDB client from context
-	mongoClient := r.Context().Value("mongoClient").(*mongo.Client)
+	mongoClient := r.Context().Value(ctxUtil.MongoClientKey).(*mongo.Client)
 
 	// Get persons from the database
 	personsList, err := db.GetPersons(mongoClient, "dodle")
@@ -48,7 +52,7 @@ func GetPersonsOfTheDay(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get MongoDB client from context
-	mongoClient := r.Context().Value("mongoClient").(*mongo.Client)
+	mongoClient := r.Context().Value(ctxUtil.MongoClientKey).(*mongo.Client)
 
 	// Update person of the day
 	personsGuess, err := db.GetPersonsOfTheDay(mongoClient, "dodle")
@@ -77,7 +81,7 @@ func CreatePersonOfTheDay(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get MongoDB client from context
-	mongoClient := r.Context().Value("mongoClient").(*mongo.Client)
+	mongoClient := r.Context().Value(ctxUtil.MongoClientKey).(*mongo.Client)
 
 	// Update person of the day
 	if err := db.UpdatePersonOfTheDay(mongoClient); err != nil {
@@ -86,14 +90,16 @@ func CreatePersonOfTheDay(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintln(w, "Person of the day updated successfully")
+	if _, err := fmt.Fprintln(w, "Person of the day updated successfully"); err != nil {
+		http.Error(w, "Failed to write response", http.StatusInternalServerError)
+	}
 }
 
 // Route : /public/v1/guess/person/submit
 func GuessPersonOfTheDay(w http.ResponseWriter, r *http.Request) {
 
 	// Get MongoDB client from context
-	mongoClient := r.Context().Value("mongoClient").(*mongo.Client)
+	mongoClient := r.Context().Value(ctxUtil.MongoClientKey).(*mongo.Client)
 
 	// Decode the guess from the request body
 	var guess persons.Person
@@ -127,7 +133,7 @@ func GuessPersonOfTheDay(w http.ResponseWriter, r *http.Request) {
 func GetHint(w http.ResponseWriter, r *http.Request) {
 
 	// Get MongoDB client from context
-	mongoClient := r.Context().Value("mongoClient").(*mongo.Client)
+	mongoClient := r.Context().Value(ctxUtil.MongoClientKey).(*mongo.Client)
 
 	// Get person of the day
 	personOfTheDay, err := db.GetPersonOfTheDay(mongoClient, "dodle")
@@ -156,7 +162,7 @@ func GetPersonOfTheDay(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get MongoDB client from context
-	mongoClient := r.Context().Value("mongoClient").(*mongo.Client)
+	mongoClient := r.Context().Value(ctxUtil.MongoClientKey).(*mongo.Client)
 
 	// Update person of the day
 	personsGuess, err := db.GetPersonsOfTheDay(mongoClient, "dodle")
@@ -179,7 +185,7 @@ func GetPersonOfTheDay(w http.ResponseWriter, r *http.Request) {
 func GetPersonOfYesterday(w http.ResponseWriter, r *http.Request) {
 
 	// Get MongoDB client from context
-	mongoClient := r.Context().Value("mongoClient").(*mongo.Client)
+	mongoClient := r.Context().Value(ctxUtil.MongoClientKey).(*mongo.Client)
 
 	// Get person of yesterday
 	personOfYesterday, err := db.GetPersonOfYesterday(mongoClient, "dodle")
@@ -202,7 +208,7 @@ func GetPersonOfYesterday(w http.ResponseWriter, r *http.Request) {
 func GetGuessID(w http.ResponseWriter, r *http.Request) {
 
 	// Get MongoDB client from context
-	mongoClient := r.Context().Value("mongoClient").(*mongo.Client)
+	mongoClient := r.Context().Value(ctxUtil.MongoClientKey).(*mongo.Client)
 
 	id, error := db.GetGuessID(mongoClient, "dodle")
 

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"os"
 )
 
@@ -13,7 +14,11 @@ func OpenPersonsFile() (persons.Persons, error) {
 	if err != nil {
 		return persons.Persons{}, fmt.Errorf("error opening file: %v", err)
 	}
-	defer jsonFile.Close()
+	defer func() {
+		if err := jsonFile.Close(); err != nil {
+			log.Printf("Failed to close file: %v", err)
+		}
+	}()
 
 	// Read the content of the file
 	content, err := io.ReadAll(jsonFile)

@@ -95,7 +95,11 @@ func GetPersons(client *mongo.Client, dbName string) (persons.Persons, error) {
 	if err != nil {
 		return persons.Persons{}, err
 	}
-	defer cursor.Close(context.TODO())
+	defer func() {
+		if err := cursor.Close(context.TODO()); err != nil {
+			log.Printf("Failed to close cursor: %v", err)
+		}
+	}()
 
 	var personsList persons.Persons
 	for cursor.Next(context.TODO()) {
@@ -120,7 +124,7 @@ func GetPersonOfTheDay(client *mongo.Client, dbName string) (persons.Person, err
 		return persons.Person{}, fmt.Errorf("GuessesOfTheMonth collection not found")
 	}
 
-	var currentDate string = time.Now().Format("2006-01-02") // Format the date as YYYY-MM-DD
+	var currentDate = time.Now().Format("2006-01-02") // Format the date as YYYY-MM-DD
 
 	// Create a document structure to match what's stored in MongoDB
 	var doc struct {
@@ -150,7 +154,11 @@ func GetPersonsOfTheDay(client *mongo.Client, dbName string) ([]persons.Person, 
 	if err != nil {
 		return nil, fmt.Errorf("failed to find persons of the day: %v", err)
 	}
-	defer cursor.Close(context.TODO())
+	defer func() {
+		if err := cursor.Close(context.TODO()); err != nil {
+			log.Printf("Failed to close cursor: %v", err)
+		}
+	}()
 
 	var personsOfTheDay []persons.Person
 	for cursor.Next(context.TODO()) {
@@ -376,7 +384,11 @@ func GetGuessID(client *mongo.Client, dbName string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to find persons of the day: %v", err)
 	}
-	defer cursor.Close(context.TODO())
+	defer func() {
+		if err := cursor.Close(context.TODO()); err != nil {
+			log.Printf("Failed to close cursor: %v", err)
+		}
+	}()
 
 	var doc struct {
 		ID     string         `bson:"_id"`
