@@ -47,7 +47,7 @@ jobs:
         docker build \
           --cache-to type=inline \
           --cache-from 'type=registry,ref=${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest' \
-          -t ${{ env.IMAGE_NAME }} ./dohub
+          -t ${{ env.IMAGE_NAME }} ./front
 
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@0.28.0
@@ -118,7 +118,7 @@ jobs:
         docker build \
           --cache-to type=inline \
           --cache-from 'type=registry,ref=${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest' \
-          -t ${{ env.IMAGE_NAME }} ./dohub
+          -t ${{ env.IMAGE_NAME }} ./api
 
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@0.28.0
