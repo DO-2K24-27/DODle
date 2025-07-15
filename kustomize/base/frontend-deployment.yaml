@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: proxyfil/dodle-frontend:main
+          image: proxyfil/dodle-front:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 80
