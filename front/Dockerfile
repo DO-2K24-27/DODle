@@ -18,6 +18,9 @@ RUN npm run build
 # Production stage
 FROM nginx:stable-alpine AS production
 
+# Install envsubst for environment variable substitution
+RUN apk add --no-cache gettext
+
 # Copy built app to nginx server
 COPY --from=build /app/dist /usr/share/nginx/html
 
@@ -27,5 +30,11 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Expose port 80
 EXPOSE 80
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Create a script to replace placeholders and start nginx
+RUN echo '#!/bin/sh' > /docker-entrypoint.sh && \
+    echo 'find /usr/share/nginx/html -type f -name "*.js" -o -name "*.html" -o -name "*.css" | xargs sed -i "s|PLACEHOLDER_API_URL|${API_URL}|g"' >> /docker-entrypoint.sh && \
+    echo 'nginx -g "daemon off;"' >> /docker-entrypoint.sh && \
+    chmod +x /docker-entrypoint.sh
+
+# Start with the custom entrypoint
+CMD ["/docker-entrypoint.sh"]

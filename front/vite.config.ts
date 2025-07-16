@@ -18,7 +18,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        target: "PLACEHOLDER_API_URL", // Replace with your actual API URL
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }
