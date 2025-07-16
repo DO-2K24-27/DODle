@@ -1,6 +1,46 @@
 [
-    {"firstname": "John", "lastname": "Doe", "gender": "Homme", "type": "Professeur", "workplace": "Université de Paris", "image": "https://via.placeholder.com/150", "hint": "Professeur de mathématiques"},
-    {"firstname": "Rémi", "lastname": "Gaillard", "gender": "Autre", "type": "Étudiant", "workplace": "Université de Montpellier", "image": "https://via.placeholder.com/150", "hint": "Professeur de mathématiques"},
-    {"firstname": "Mami", "lastname": "Twink", "gender": "Homme", "type": "IP", "workplace": "Université de Nimes", "image": "https://via.placeholder.com/150", "hint": "Professeur de mathématiques"},
-    {"firstname": "Moi", "lastname": "Toi", "gender": "Femme", "type": "Professeur", "workplace": "Université de Paris", "image": "https://via.placeholder.com/150", "hint": "Professeur de mathématiques"}
+    {"firstname": "Pierre-Louis", "lastname": "Leclerc", "gender": "Homme", "type": "DO24-27", "workplace": "CIRAD", "image": "", "hint": "Pas bien grand"},
+    {"firstname": "Liam", "lastname": "Soulet", "gender": "Homme", "type": "DO24-27", "workplace": "Groupama Supports et Services", "image": "", "hint": "Anime enjoyer"},
+    {"firstname": "Margo", "lastname": "Surina", "gender": "Femme", "type": "DO24-27", "workplace": "Val Solutions", "image": "", "hint": "Déléguée"},
+    {"firstname": "Hugo", "lastname": "Du Peloux", "gender": "Homme", "type": "DO24-27", "workplace": "Septeo", "image": "", "hint": "Kube master"},
+    {"firstname": "Evan", "lastname": "Paillard", "gender": "Homme", "type": "DO24-27", "workplace": "Septeo", "image": "", "hint": "Peip de Montpellier"},
+    {"firstname": "Thomas", "lastname": "Rubini", "gender": "Homme", "type": "DO24-27", "workplace": "Naval Group", "image": "", "hint": "Secret défense"},
+    {"firstname": "Ruben", "lastname": "Rouvière", "gender": "Homme", "type": "DO24-27", "workplace": "Université de Montpellier", "image": "", "hint": "Seul alternant à payer 3,30€"},
+    {"firstname": "Nathan", "lastname": "Dilhan", "gender": "Homme", "type": "DO24-27", "workplace": "CINES", "image": "", "hint": "N'aime plus les vestes"},
+    {"firstname": "Noa", "lastname": "Despaux", "gender": "Homme", "type": "DO24-27", "workplace": "IRD", "image": "", "hint": "Alcoolique raciste"},
+    {"firstname": "Estelle", "lastname": "Tamalet", "gender": "Femme", "type": "DO24-27", "workplace": "CapGemini", "image": "", "hint": "Soon aveugle"},
+    {"firstname": "Joris", "lastname": "Vilardell", "gender": "Homme", "type": "DO24-27", "workplace": "Hardis Group", "image": "", "hint": "Aime le crabe et les clés"},
+    {"firstname": "Damien", "lastname": "Mathieu", "gender": "Homme", "type": "DO24-27", "workplace": "Anaba", "image": "", "hint": "Entre vibe-coding et leak de clés AWS"},
+    {"firstname": "Damien", "lastname": "Rodriguez", "gender": "Homme", "type": "DO24-27", "workplace": "Radioshop", "image": "", "hint": "Aigri heureux"},
+    {"firstname": "Auriane", "lastname": "Pusel", "gender": "Femme", "type": "DO24-27", "workplace": "Clauger", "image": "", "hint": "Le victime du fils du patron"},
+    {"firstname": "Axel", "lastname": "Frache", "gender": "Homme", "type": "DO24-27", "workplace": "Agysoft", "image": "", "hint": "Homelab owner"},
+
+    {"firstname": "Sarah", "lastname": "Theoulle", "gender": "Femme", "type": "DO23-26", "workplace": "La Poste", "image": "", "hint": "Dreamcatcher addict"},
+    {"firstname": "Baptiste", "lastname": "Bronsin", "gender": "Homme", "type": "DO23-26", "workplace": "Alemca", "image": "", "hint": "Amateur de vins"},
+    {"firstname": "Isalyne", "lastname": "Llinares--Rames", "gender": "Femme", "type": "DO23-26", "workplace": "Deskoin", "image": "", "hint": "Organisatrice de conférences"},
+    {"firstname": "Nathaël", "lastname": "Bonnal", "gender": "Homme", "type": "DO23-26", "workplace": "Nudibranches", "image": "", "hint": "Prosélyte de rust"},
+    {"firstname": "Benoit", "lastname": "Planche", "gender": "Homme", "type": "DO23-26", "workplace": "Yooz", "image": "", "hint": "Fait des visios avec lui-même"},
+    {"firstname": "Hugo", "lastname": "Ponthieu", "gender": "Homme", "type": "DO23-26", "workplace": "La Poste", "image": "", "hint": "A jamais changé de boite"},
+    {"firstname": "Giada", "lastname": "Flora De Martino", "gender": "Femme", "type": "DO23-26", "workplace": "La Poste", "image": "", "hint": "Aime les cookies"},
+    {"firstname": "Tristan-Mihai", "lastname": "Radulescu", "gender": "Homme", "type": "DO23-26", "workplace": "Sweep", "image": "", "hint": "Talkeur à la Polycloud"},
+    {"firstname": "Théo", "lastname": "Tchilinguirian", "gender": "Homme", "type": "DO23-26", "workplace": "Renault Digital", "image": "", "hint": "Touriste de Paris"},
+
+    {"firstname": "Fabien", "lastname": "Zoccola", "gender": "Homme", "type": "DO22-25", "workplace": "Crédit Agricole Group Infrastructure Platform", "image": "", "hint": "Medic de DO"},
+    {"firstname": "Rémi", "lastname": "Espié", "gender": "Homme", "type": "DO22-25", "workplace": "GE Grid Solutions", "image": "", "hint": "Always good vibe"},
+
+    {"firstname": "Alexis", "lastname": "Bernard", "gender": "Homme", "type": "DO21-24", "workplace": "Vizzia", "image": "", "hint": "Ancêtre"},
+    {"firstname": "Alexis", "lastname": "Langlet", "gender": "Homme", "type": "DO21-24", "workplace": "Nudibranches", "image": "", "hint": "Est un lord."},
+
+    {"firstname": "Samuel", "lastname": "Ortiz", "gender": "Homme", "type": "Intervenant", "workplace": "Rivos", "image": "", "hint": "Rust god"},
+    {"firstname": "François", "lastname": "Teychene", "gender": "Homme", "type": "Intervenant", "workplace": "NullPointeur", "image": "", "hint": "Talkeur Polycloud et SunnyTech"},
+    {"firstname": "Cyril", "lastname": "Lopez", "gender": "Homme", "type": "Intervenant", "workplace": "Red Hat", "image": "", "hint": "Littéralement le mec qui soutient Red Hat"},
+    {"firstname": "Guillaume", "lastname": "Leroy", "gender": "Homme", "type": "Intervenant", "workplace": "TheRealm", "image": "", "hint": "Le mec des CI/CD là"},
+    {"firstname": "Dardié", "lastname": "Roch", "gender": "Homme", "type": "Intervenant", "workplace": "Nudibranches", "image": "", "hint": "Maître de secte"},
+
+    {"firstname": "Michel", "lastname": "Facerias", "gender": "Homme", "type": "Professeur", "workplace": "Université de Montpellier", "image": "", "hint": "Authentification à multiple facteurs"},
+    {"firstname": "Vincent", "lastname": "Berry", "gender": "Homme", "type": "Professeur", "workplace": "Université de Montpellier", "image": "", "hint": "Responsable de la formation"},
+    {"firstname": "Éléonora", "lastname": "Guerrini", "gender": "Femme", "type": "Professeur", "workplace": "Université de Montpellier", "image": "", "hint": "Pire cauchemar des DO"},
+    {"firstname": "Noel", "lastname": "Gaussens", "gender": "Femme", "type": "Professeur", "workplace": "Université de Montpellier", "image": "", "hint": "Prof la plus investie"},
+    {"firstname": "Lysiane", "lastname": "Buisson-Lopez", "gender": "Femme", "type": "Professeur", "workplace": "Université de Montpellier", "image": "", "hint": "Pecha Kucha Guru"},
+    {"firstname": "Christophe", "lastname": "Nauroy", "gender": "Homme", "type": "Intervenant", "workplace": "Université de Montpellier", "image": "", "hint": "Connait Angular mais pas tant"}
 ]
