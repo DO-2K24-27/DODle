@@ -33,6 +33,7 @@ EXPOSE 80
 # Create a script to replace placeholders and start nginx
 RUN echo '#!/bin/sh' > /docker-entrypoint.sh && \
     echo 'find /usr/share/nginx/html -type f -name "*.js" -o -name "*.html" -o -name "*.css" | xargs sed -i "s|PLACEHOLDER_API_URL|${API_URL}|g"' >> /docker-entrypoint.sh && \
+    echo 'sed -i "s|PLACEHOLDER_API_URL|${API_URL}|g" /etc/nginx/conf.d/default.conf' >> /docker-entrypoint.sh && \
     echo 'nginx -g "daemon off;"' >> /docker-entrypoint.sh && \
     chmod +x /docker-entrypoint.sh
 
