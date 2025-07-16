@@ -13,6 +13,25 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+// CORS middleware to handle Cross-Origin Resource Sharing
+func corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Set CORS headers
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With")
+		w.Header().Set("Access-Control-Allow-Credentials", "false")
+
+		// Handle preflight requests
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
 // Middleware to inject MongoDB client into request context
 func withMongoClient(next http.Handler, client *mongo.Client) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -82,7 +101,7 @@ func main() {
 	mux.Handle("/private/v1/guess/person/create", withMongoClient(createPODHandler, mongoClient))
 
 	fmt.Println("Server starting on :8080...")
-	if err := http.ListenAndServe(":8080", mux); err != nil {
+	if err := http.ListenAndServe(":8080", corsMiddleware(mux)); err != nil {
 		log.Fatal(err)
 	}
 }

@@ -1,6 +1,7 @@
 import type { Person, GuessResult } from '@/types/person';
 
-const API_BASE_URL = '/api';
+// Use relative path for API calls when using nginx proxy, or full URL for direct calls
+const API_BASE_URL = 'PLACEHOLDER_API_URL'; // This will be replaced with actual API URL
 
 export const apiService = {
   async getPersons(): Promise<{ persons: Person[] }> {

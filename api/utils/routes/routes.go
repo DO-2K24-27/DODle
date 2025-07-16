@@ -34,7 +34,6 @@ func GetPersons(w http.ResponseWriter, r *http.Request) {
 
 	// Set response headers
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	// Encode persons as JSON and send response
 	if err := json.NewEncoder(w).Encode(personsList); err != nil {
@@ -63,7 +62,6 @@ func GetPersonsOfTheDay(w http.ResponseWriter, r *http.Request) {
 
 	// Set response headers
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	if err := json.NewEncoder(w).Encode(personsGuess); err != nil {
 		http.Error(w, "Failed to encode response: "+err.Error(), http.StatusInternalServerError)
@@ -118,7 +116,6 @@ func GuessPersonOfTheDay(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	if err := json.NewEncoder(w).Encode(map[string]interface{}{
 		"correct": correct,
@@ -144,7 +141,6 @@ func GetHint(w http.ResponseWriter, r *http.Request) {
 
 	// Set response headers
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	if err := json.NewEncoder(w).Encode(personOfTheDay.Hint); err != nil {
 		http.Error(w, "Failed to encode response: "+err.Error(), http.StatusInternalServerError)
@@ -173,7 +169,6 @@ func GetPersonOfTheDay(w http.ResponseWriter, r *http.Request) {
 
 	// Set response headers
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	if err := json.NewEncoder(w).Encode(personsGuess[len(personsGuess)-1]); err != nil {
 		http.Error(w, "Failed to encode response: "+err.Error(), http.StatusInternalServerError)
@@ -196,7 +191,6 @@ func GetPersonOfYesterday(w http.ResponseWriter, r *http.Request) {
 
 	// Set response headers
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	if err := json.NewEncoder(w).Encode(personOfYesterday); err != nil {
 		http.Error(w, "Failed to encode response: "+err.Error(), http.StatusInternalServerError)
@@ -219,7 +213,6 @@ func GetGuessID(w http.ResponseWriter, r *http.Request) {
 
 	// Set response headers
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	if err := json.NewEncoder(w).Encode(map[string]string{"id": id}); err != nil {
 		http.Error(w, "Failed to encode response: "+err.Error(), http.StatusInternalServerError)
