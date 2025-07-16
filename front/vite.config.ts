@@ -15,15 +15,6 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
-  server: {
-    proxy: {
-      '/api': {
-        target: "PLACEHOLDER_API_URL", // Replace with your actual API URL
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
-      }
-    }
-  },
   // Provide polyfills for Node.js built-in modules
   define: {
     global: {},
