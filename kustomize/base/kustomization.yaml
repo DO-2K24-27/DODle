@@ -9,4 +9,5 @@ resources:
   - frontend-deployment.yaml
   - frontend-service.yaml
   - ingress.yaml
+  - backend-secret.yaml
 namespace: dodle # select namespace for whole application 

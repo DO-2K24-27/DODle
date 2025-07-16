@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: proxyfil/dodle-api:latest
+          image: proxyfil/dodle-api:0.0.7
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -29,7 +29,10 @@ spec:
             - name: MONGODB_DATABASE
               value: "dodle"
             - name: API_TOKEN
-              value: "your_api_token_here"
+              valueFrom:
+                secretKeyRef:
+                  name: dodle-backend-secret
+                  key: API_TOKEN
           livenessProbe:
             httpGet:
               path: /health

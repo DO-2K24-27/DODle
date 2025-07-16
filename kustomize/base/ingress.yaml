@@ -14,7 +14,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name:  dodle-svc
+                name:  dodle-frontend
                 port:
                   number: 80
     - host: dodle-api.do-polytech.fr
@@ -24,6 +24,16 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name:  dodle-svc
+                name:  dodle-backend
+                port:
+                  number: 8080
+    - host: api-dodle.do-polytech.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name:  dodle-backend
                 port:
                   number: 8080

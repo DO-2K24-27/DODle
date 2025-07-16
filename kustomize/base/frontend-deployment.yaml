@@ -14,10 +14,13 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: proxyfil/dodle-front:latest
+          image: proxyfil/dodle-front:0.0.7
           imagePullPolicy: Always
           ports:
             - containerPort: 80
+          env:
+            - name: API_URL
+              value: "https://dodle-api.do-polytech.fr"
           livenessProbe:
             httpGet:
               path: /
