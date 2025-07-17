@@ -456,22 +456,22 @@ const getFieldClass = (resultField: string, guessedField: string) => {
 }
 
 .submit-button {
-    background-color: #3a3a3c;
+    background-color: #28a745;
     color: white;
 }
 
 .submit-button:hover:not(:disabled) {
-    background-color: #2c2c2e;
+    background-color: #1e7e34;
 }
 
 .hint-button {
-    background-color: #28a745;
+    background-color: #3a3a3c;
     border: none;
     color: white;
 }
 
 .hint-button:hover:not(:disabled) {
-    background-color: #1e7e34;
+    background-color: #2c2c2e;
 }
 
 .submit-button:disabled,
