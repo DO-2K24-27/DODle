@@ -21,7 +21,7 @@
     {"firstname": "Nathaël", "lastname": "Bonnal", "gender": "Homme", "type": "DO23-26", "workplace": "Nudibranches", "image": "", "hint": "Prosélyte de rust"},
     {"firstname": "Benoit", "lastname": "Planche", "gender": "Homme", "type": "DO23-26", "workplace": "Yooz", "image": "", "hint": "Fait des visios avec lui-même"},
     {"firstname": "Hugo", "lastname": "Ponthieu", "gender": "Homme", "type": "DO23-26", "workplace": "La Poste", "image": "", "hint": "A jamais changé de boite"},
-    {"firstname": "Giada", "lastname": "Flora De Martino", "gender": "Femme", "type": "DO23-26", "workplace": "La Poste", "image": "", "hint": "Aime les cookies"},
+    {"firstname": "Giada Flora", "lastname": "De Martino", "gender": "Femme", "type": "DO23-26", "workplace": "La Poste", "image": "", "hint": "Aime les cookies"},
     {"firstname": "Tristan-Mihai", "lastname": "Radulescu", "gender": "Homme", "type": "DO23-26", "workplace": "Sweep", "image": "", "hint": "Talkeur à la Polycloud"},
     {"firstname": "Théo", "lastname": "Tchilinguirian", "gender": "Homme", "type": "DO23-26", "workplace": "Renault Digital", "image": "", "hint": "Touriste de Paris"},
 
@@ -42,5 +42,5 @@
     {"firstname": "Éléonora", "lastname": "Guerrini", "gender": "Femme", "type": "Professeur", "workplace": "Université de Montpellier", "image": "", "hint": "Pire cauchemar des DO"},
     {"firstname": "Noel", "lastname": "Gaussens", "gender": "Femme", "type": "Professeur", "workplace": "Université de Montpellier", "image": "", "hint": "Prof la plus investie"},
     {"firstname": "Lysiane", "lastname": "Buisson-Lopez", "gender": "Femme", "type": "Professeur", "workplace": "Université de Montpellier", "image": "", "hint": "Pecha Kucha Guru"},
-    {"firstname": "Christophe", "lastname": "Nauroy", "gender": "Homme", "type": "Intervenant", "workplace": "Université de Montpellier", "image": "", "hint": "Connait Angular mais pas tant"}
+    {"firstname": "Christophe", "lastname": "Nauroy", "gender": "Homme", "type": "Professeur", "workplace": "Université de Montpellier", "image": "", "hint": "Connait Angular mais pas tant"}
 ]
