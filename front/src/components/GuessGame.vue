@@ -585,7 +585,7 @@ const getFieldClass = (resultField: string, guessedField: string) => {
 }
 
 .cell.incorrect {
-    background-color: #3a3a3c;
+    background-color: #aa423e;
 }
 
 @media (max-width: 768px) {
