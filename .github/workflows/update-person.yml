@@ -1,7 +1,7 @@
 name: Update person for the day
 on:
   schedule:
-    - cron: "42 23 * * *"
+    - cron: "01 00 * * *"
 
 jobs:
   update-person:
@@ -9,5 +9,5 @@ jobs:
     steps:
       - name: Call endpoint to update person
         run: |
-          curl -X GET "https://dodle-api.do-polytech.fr/private/v1/guess/person/create" \
-          -H API-Token "${{ secrets.API_TOKEN }}"
+          curl -X GET -H 'Api-Token: ${{ secrets.API_TOKEN }}' \
+          "https://dodle-api.do-polytech.fr/private/v1/guess/person/create"
