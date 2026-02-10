@@ -39,7 +39,7 @@
 
     {"firstname": "Michel", "lastname": "Facerias", "gender": "Homme", "type": "Professeur", "workplace": "Université de Montpellier", "image": "", "hint": "Authentification à multiple facteurs"},
     {"firstname": "Vincent", "lastname": "Berry", "gender": "Homme", "type": "Professeur", "workplace": "Université de Montpellier", "image": "", "hint": "Responsable de la formation"},
-    {"firstname": "Éléonora", "lastname": "Guerrini", "gender": "Femme", "type": "Professeur", "workplace": "Université de Montpellier", "image": "", "hint": "Pire cauchemar des DO"},
+    {"firstname": "Éléonora", "lastname": "Guerrini", "gender": "Femme", "type": "Professeur", "workplace": "Université de Montpellier", "image": "", "hint": "Personne adorable"},
     {"firstname": "Noel", "lastname": "Gaussens", "gender": "Femme", "type": "Professeur", "workplace": "Université de Montpellier", "image": "", "hint": "Prof la plus investie"},
     {"firstname": "Lysiane", "lastname": "Buisson-Lopez", "gender": "Femme", "type": "Professeur", "workplace": "Université de Montpellier", "image": "", "hint": "Pecha Kucha Guru"},
     {"firstname": "Christophe", "lastname": "Nauroy", "gender": "Homme", "type": "Professeur", "workplace": "Université de Montpellier", "image": "", "hint": "Connait Angular mais pas tant"}
