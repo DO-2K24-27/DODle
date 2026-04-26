@@ -24,10 +24,10 @@ FROM alpine:latest
 
 WORKDIR /app
 
+RUN apk --no-cache add curl
+
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
-
-RUN apk --no-cache add curl
 
 # Copy the binary from builder
 COPY --from=builder /app/main .
