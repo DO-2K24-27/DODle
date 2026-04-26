@@ -3,7 +3,13 @@ kind: Deployment
 metadata:
   name: dodle-frontend
 spec:
-  revisionHistoryLimit : 0
+  replicas: 2
+  revisionHistoryLimit: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
   selector:
     matchLabels:
       app: dodle-frontend
@@ -12,12 +18,29 @@ spec:
       labels:
         app: dodle-frontend
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - dodle-frontend
+              topologyKey: kubernetes.io/hostname
       containers:
         - name: frontend
-          image: proxyfil/dodle-front:0.0.7
+          image: proxyfil/dodle-front:1.0.1
           imagePullPolicy: Always
           ports:
             - containerPort: 80
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 400m
+              memory: 256Mi
           env:
             - name: API_URL
               value: "https://dodle-api.do-polytech.fr"
@@ -25,5 +48,11 @@ spec:
             httpGet:
               path: /
               port: 80
-            initialDelaySeconds: 30
+            initialDelaySeconds: 5
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
             periodSeconds: 30

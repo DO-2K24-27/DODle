@@ -19,7 +19,7 @@ RUN npm run build
 FROM nginx:stable-alpine AS production
 
 # Install envsubst for environment variable substitution
-RUN apk add --no-cache gettext
+RUN apk add --no-cache gettext curl
 
 # Copy built app to nginx server
 COPY --from=build /app/dist /usr/share/nginx/html
@@ -29,6 +29,8 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 80
 EXPOSE 80
+
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD [ "curl -f http://localhost:8080/ || exit 1" ]
 
 # Create a script to replace placeholders and start nginx
 RUN echo '#!/bin/sh' > /docker-entrypoint.sh && \
