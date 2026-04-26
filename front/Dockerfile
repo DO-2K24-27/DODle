@@ -19,7 +19,7 @@ RUN npm run build
 FROM nginx:stable-alpine AS production
 
 # Install envsubst for environment variable substitution
-RUN apk add --no-cache gettext
+RUN apk add --no-cache gettext curl
 
 # Copy built app to nginx server
 COPY --from=build /app/dist /usr/share/nginx/html
