@@ -30,6 +30,8 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Expose port 80
 EXPOSE 80
 
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD [ "curl -f http://localhost:8080/ || exit 1" ]
+
 # Create a script to replace placeholders and start nginx
 RUN echo '#!/bin/sh' > /docker-entrypoint.sh && \
     echo 'find /usr/share/nginx/html -type f -name "*.js" -o -name "*.html" -o -name "*.css" | xargs sed -i "s|PLACEHOLDER_API_URL|${API_URL}|g"' >> /docker-entrypoint.sh && \

@@ -24,12 +24,17 @@ FROM alpine:latest
 
 WORKDIR /app
 
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
+
 # Copy the binary from builder
 COPY --from=builder /app/main .
 COPY --from=builder /app/data ./data
 
 # Expose port
 EXPOSE 8080
+
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD [ "curl http://localhost:8080 || exit 1" ]
 
 # Run the application
 CMD ["./main"] 
