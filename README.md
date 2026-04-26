@@ -1,6 +1,8 @@
 # DODle
 Like wordle but guess DO related people
 
+[![Update person for the day](https://github.com/DO-2K24-27/DODle/actions/workflows/update-person.yml/badge.svg)](https://github.com/DO-2K24-27/DODle/actions/workflows/update-person.yml)
+
 ## Languages
 
 - For front we will use Next.js
