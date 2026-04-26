@@ -7,7 +7,7 @@ on:
 
 jobs:
   containerize-front:
-    runs-on: github-runner-do
+    runs-on: github-runner-do-vm
     env:
       # github.repository as <account>/<repo>
       IMAGE_NAME: "dodle-front"
@@ -80,7 +80,7 @@ jobs:
         docker push -a '${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}'
 
   containerize-api:
-    runs-on: github-runner-do
+    runs-on: github-runner-do-vm
     env:
       # github.repository as <account>/<repo>
       IMAGE_NAME: "dodle-api"

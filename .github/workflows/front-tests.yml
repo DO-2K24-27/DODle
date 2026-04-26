@@ -41,7 +41,7 @@ jobs:
 
   build-and-push:
     needs: test
-    runs-on: github-runner-do
+    runs-on: github-runner-do-vm
     env:
       # github.repository as <account>/<repo>
       IMAGE_NAME: "dodle-front"
