@@ -21,16 +21,18 @@ spec:
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: app
-                    operator: In
-                    values:
-                      - dodle-backend
-              topologyKey: kubernetes.io/hostname
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - dodle-backend
+                topologyKey: kubernetes.io/hostname
       containers:
         - name: backend
-          image: proxyfil/dodle-api:1.0.1
+          image: proxyfil/dodle-api:1.0.2
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
