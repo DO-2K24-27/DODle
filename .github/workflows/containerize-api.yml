@@ -18,7 +18,7 @@ on:
 
 jobs:
   containerize:
-    runs-on: github-runner-do-vm
+    runs-on: ubuntu-latest
     env:
       # github.repository as <account>/<repo>
       IMAGE_NAME: "dodle-api"
