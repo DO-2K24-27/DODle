@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dodle-rabbitmq-producer
+  namespace: polytech
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dodle-rabbitmq-producer
+  template:
+    metadata:
+      labels:
+        app: dodle-rabbitmq-producer
+    spec:
+      containers:
+        - name: producer
+          image: proxyfil/dodle-rabbitmq-producer:1.0.0
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
+          restartPolicy: Always

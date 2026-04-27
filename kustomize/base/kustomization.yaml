@@ -4,14 +4,17 @@ resources:
   - mongodb-pvc.yaml
   - mongodb-deployment.yaml
   - mongodb-service.yaml
+  - rabbitmq-pvc.yaml
+  - rabbitmq-secret.yaml
+  - rabbitmq-deployment.yaml
+  - rabbitmq-service.yaml
   - backend-deployment.yaml
-  - backend-hpa.yaml
   - backend-pdb.yaml
   - backend-service.yaml
   - frontend-deployment.yaml
-  - frontend-hpa.yaml
   - frontend-pdb.yaml
   - frontend-service.yaml
   - ingress.yaml
   - backend-secret.yaml
+  - keda-scaling.yaml
 namespace: polytech # select namespace for whole application 
